@@ -30,7 +30,7 @@ else
   wa_start=1
   wa_end=5
 fi
-te_data=./data/datafiles/train_data.json
+te_data=./data/datafiles/eval_data.json
 freqm=48
 timem=192
 mixup=0.5
