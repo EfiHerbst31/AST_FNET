@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 6/11/21 12:57 AM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : run.py
-
 import argparse
 import os
 import ast
@@ -29,6 +22,7 @@ parser.add_argument("--data-eval", type=str, default='', help="evaluation data j
 parser.add_argument("--label-csv", type=str, default='', help="csv with class labels")
 parser.add_argument("--n_class", type=int, default=527, help="number of classes")
 parser.add_argument("--model", type=str, default='ast', help="the model used")
+parser.add_argument("--transformer", type=str, default='attn', help="the transformer used") # attn, fnet
 parser.add_argument("--dataset", type=str, default="audioset", help="the dataset used")
 
 parser.add_argument("--exp-dir", type=str, default="", help="directory to dump experiments")
@@ -130,9 +124,14 @@ if args.model == 'ast':
         dataloader.AudiosetDataset(args.data_val, label_csv=args.label_csv, audio_conf=val_audio_conf),
         batch_size=args.batch_size*2, shuffle=False, num_workers=args.num_workers, pin_memory=True)
 
-    audio_model = models.ASTModel(label_dim=args.n_class, fstride=args.fstride, tstride=args.tstride, input_fdim=128,
-                                  input_tdim=args.audio_length, imagenet_pretrain=args.imagenet_pretrain,
-                                  audioset_pretrain=args.audioset_pretrain, model_size='base384')
+    if args.transformer == 'attn':
+        audio_model = models.ASTModel(label_dim=args.n_class, fstride=args.fstride, tstride=args.tstride, input_fdim=128,
+                                    input_tdim=args.audio_length, imagenet_pretrain=args.imagenet_pretrain,
+                                    audioset_pretrain=args.audioset_pretrain, model_size='base384')
+    elif args.transformer == 'fnet':
+        audio_model = models.ASTFNetModel(label_dim=args.n_class, fstride=args.fstride, tstride=args.tstride, input_fdim=128,
+                                    input_tdim=args.audio_length, imagenet_pretrain=args.imagenet_pretrain,
+                                    audioset_pretrain=args.audioset_pretrain, model_size='base384')
 
 print("\nCreating experiment directory: %s" % args.exp_dir)
 os.makedirs("%s/models" % args.exp_dir)
@@ -169,4 +168,3 @@ if args.dataset == 'speechcommands':
     print("Accuracy: {:.6f}".format(eval_acc))
     print("AUC: {:.6f}".format(eval_mAUC))
     np.savetxt(args.exp_dir + '/eval_result.csv', [val_acc, val_mAUC, eval_acc, eval_mAUC])
-
