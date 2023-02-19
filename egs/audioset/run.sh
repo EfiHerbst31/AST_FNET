@@ -6,14 +6,14 @@ model=ast
 transformer=$1
 dataset=audioset
 # full or balanced for audioset
-set=full
+set=balanced
 imagenetpretrain=True
 if [ $set == balanced ]
 then
   bal=none
   lr=5e-5
   epoch=25
-  tr_data=/data/sls/scratch/yuangong/aed-pc/src/enhance_label/datafiles_local/balanced_train_data_type1_2_mean.json
+  tr_data=./data/datafiles/train_data.json
   lrscheduler_start=10
   lrscheduler_step=5
   lrscheduler_decay=0.5
@@ -30,7 +30,7 @@ else
   wa_start=1
   wa_end=5
 fi
-te_data=/data/sls/scratch/yuangong/audioset/datafiles/eval_data.json
+te_data=./data/datafiles/eval_data.json
 freqm=48
 timem=192
 mixup=0.5
