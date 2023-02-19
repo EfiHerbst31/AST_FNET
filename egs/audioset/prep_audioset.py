@@ -16,7 +16,7 @@ def prep_data(csv_file_path, wav_files_output_path, sample_data_json_file_path):
         start_time = meta[i][1]
         end_time = meta[i][2]
         lables = meta[i][3]
-        youtube_video_to_wav_file(video_id, start_time, end_time)
+        youtube_video_to_wav_file(video_id, start_time, end_time, wav_files_output_path)
         
         wav_file_path = wav_files_output_path + video_id + "_16k.wav"
         cur_dict = {"wav": wav_file_path, "labels": lables}
