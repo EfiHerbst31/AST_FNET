@@ -3,9 +3,9 @@ import json
 import os
 
 def youtube_video_to_wav_file(video_id, start_time, end_time, wav_files_output_path):
-    duration = end_time - start_time
-    os.system(f"cd {wav_files_output_path} && ffmpeg $(./yt-dlp/yt-dlp -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {video_id}.mkv && ffmpeg -i {video_id}.mkv -acodec pcm_s16le -ac 2 {video_id}.wav && rm {video_id}.mkv")
-    os.system(f"cd {wav_files_output_path} && sox {video_id}.wav -r 16000 {video_id}_16k.wav && rm {video_id}.wav")
+    duration = float(end_time) - float(start_time)
+    os.system(f"ffmpeg $(./yt-dlp/yt-dlp -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {wav_files_output_path}/{video_id}.mkv && ffmpeg -i {wav_files_output_path}/{video_id}.mkv -acodec pcm_s16le -ac 2 {wav_files_output_path}/{video_id}.wav && rm {wav_files_output_path}/{video_id}.mkv")
+    os.system(f"sox {wav_files_output_path}/{video_id}.wav -r 16000 {wav_files_output_path}/{video_id}_16k.wav && rm {wav_files_output_path}/{video_id}.wav")
 
 def prep_data(csv_file_path, wav_files_output_path, sample_data_json_file_path):
     os.mkdir(wav_files_output_path)
