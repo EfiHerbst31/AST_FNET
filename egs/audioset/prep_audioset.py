@@ -9,7 +9,7 @@ def youtube_video_to_wav_file(video_id, start_time, end_time, wav_files_output_p
 
 def prep_data(csv_file_path, wav_files_output_path, sample_data_json_file_path):
     os.mkdir(wav_files_output_path)
-    meta = np.loadtxt(csv_file_path, delimiter=',', dtype='str', skiprows=3)
+    meta = np.loadtxt(csv_file_path, delimiter=',', dtype='str', skiprows=1, quotechar='"')
     wav_list = []
     for i in range(0, len(meta)):
         video_id = meta[i][0]
@@ -23,8 +23,9 @@ def prep_data(csv_file_path, wav_files_output_path, sample_data_json_file_path):
         wav_list.append(cur_dict)
     with open(sample_data_json_file_path, 'w') as f:
         json.dump({'data': wav_list}, f, indent=1)
-        
-        
+
+os.mkdir("./data/datafiles/audio_16k")
+
 print("Preparing training data")
 prep_data("./data/balanced_train_segments.csv", "./data/datafiles/audio_16k/train", "./data/datafiles/train_data.json")
 
