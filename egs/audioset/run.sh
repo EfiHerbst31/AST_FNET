@@ -1,22 +1,9 @@
 #!/bin/bash
-#SBATCH -p sm
-#SBATCH -x sls-sm-1,sls-2080-[1,3],sls-1080-3,sls-sm-[5,6]
-##SBATCH -p gpu
-##SBATCH -x sls-titan-[0-2]
-#SBATCH --gres=gpu:4
-#SBATCH -c 4
-#SBATCH -n 1
-#SBATCH --mem=48000
-#SBATCH --job-name="ast_as"
-#SBATCH --output=./log_%j.txt
-
 set -x
-# comment this line if not running on sls cluster
-. /data/sls/scratch/share-201907/slstoolchainrc
-source ../../venvast/bin/activate
 export TORCH_HOME=../../pretrained_models
 
 model=ast
+transformer=$1
 dataset=audioset
 # full or balanced for audioset
 set=full
@@ -62,14 +49,14 @@ loss=BCE
 warmup=True
 wa=True
 
-exp_dir=./exp/test-${set}-f$fstride-t$tstride-p$imagenetpretrain-b$batch_size-lr${lr}-decoupe
+exp_dir=./exp/test-${set}-${transformer}-f$fstride-t$tstride-p$imagenetpretrain-b$batch_size-lr${lr}-decoupe
 if [ -d $exp_dir ]; then
   echo 'exp exist'
   exit
 fi
 mkdir -p $exp_dir
 
-CUDA_CACHE_DISABLE=1 python -W ignore ../../src/run.py --model ${model} --dataset ${dataset} \
+CUDA_CACHE_DISABLE=1 python -W ignore ../../src/run.py --model ${model} --transformer ${transformer} --dataset ${dataset} \
 --data-train ${tr_data} --data-val ${te_data} --exp-dir $exp_dir \
 --label-csv ./data/class_labels_indices.csv --n_class 527 \
 --lr $lr --n-epochs ${epoch} --batch-size $batch_size --save_model True \
