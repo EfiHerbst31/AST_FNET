@@ -49,6 +49,8 @@ loss=BCE
 warmup=True
 wa=True
 
+python ./prep_audioset.py
+
 exp_dir=./exp/test-${set}-${transformer}-f$fstride-t$tstride-p$imagenetpretrain-b$batch_size-lr${lr}-decoupe
 if [ -d $exp_dir ]; then
   echo 'exp exist'
