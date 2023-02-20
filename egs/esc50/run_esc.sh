@@ -5,8 +5,8 @@ export TORCH_HOME=../../pretrained_models
 model=ast
 transformer=$1
 dataset=esc50
-imagenetpretrain=True
-audiosetpretrain=True
+imagenetpretrain=False
+audiosetpretrain=False
 bal=none
 if [ $audiosetpretrain == True ]
 then
@@ -33,6 +33,7 @@ warmup=False
 lrscheduler_start=30
 lrscheduler_step=1
 lrscheduler_decay=0.85
+batch_size=24
 
 base_exp_dir=./exp/test-${dataset}-${transformer}-f$fstride-t$tstride-imp$imagenetpretrain-asp$audiosetpretrain-b$batch_size-lr${lr}
 
