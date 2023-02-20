@@ -18,13 +18,16 @@ def youtube_video_to_wav_file(video_id, start_time, end_time, wav_files_output_p
     """
     
     # resample 16k
-    # os.system(f"sox {wav_files_output_path}/{video_id}.wav -r 16000 {wav_files_output_path}/{video_id}_16k.wav && rm {wav_files_output_path}/{video_id}.wav")
+    os.system(f"sox {wav_files_output_path}/{video_id}.wav -r 16000 {wav_files_output_path}/{video_id}_16k.wav && rm {wav_files_output_path}/{video_id}.wav")
 
-    return f"{wav_files_output_path}/{video_id}.wav"
+    return f"{wav_files_output_path}/{video_id}_16k.wav"
 
 
 def prep_data(csv_file_path, wav_files_output_path, sample_data_json_file_path):
-    os.makedirs(wav_files_output_path, exist_ok=True)
+    if os.path.exists(wav_files_output_path):
+        print(f"{wav_files_output_path} is already exist. Use existing files.")
+
+    os.makedirs(wav_files_output_path)
 
     meta = np.loadtxt(csv_file_path, delimiter=',',
                       dtype='str', skiprows=1, quotechar='"')
