@@ -18,7 +18,7 @@ freqm=24
 timem=96
 mixup=0
 epoch=50
-batch_size=48
+batch_size=24
 fstride=10
 tstride=10
 
@@ -28,12 +28,11 @@ audio_length=512
 noise=False
 
 metrics=acc
-loss=CE
+loss=BCE
 warmup=False
 lrscheduler_start=30
 lrscheduler_step=1
 lrscheduler_decay=0.85
-batch_size=24
 
 base_exp_dir=./exp/test-${dataset}-${transformer}-f$fstride-t$tstride-imp$imagenetpretrain-asp$audiosetpretrain-b$batch_size-lr${lr}
 
