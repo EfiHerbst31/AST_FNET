@@ -11,19 +11,30 @@ WAV_DIR = os.path.join(BASE_DIR, "wav_files")
 
 def youtube_video_to_wav_file(video_id, start_time, end_time, wav_files_output_path):
     duration = float(end_time) - float(start_time)
+    original_wav_file_path = f"{wav_files_output_path}/{video_id}.wav"
+    wav_file_path = f"{wav_files_output_path}/{video_id}_16k.wav"
+    
+    if os.path.exists(wav_file_path):
+        return wav_file_path
+
     os.system(
-        f"ffmpeg $(./yt-dlp/yt-dlp -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {wav_files_output_path}/{video_id}.mkv && ffmpeg -i {wav_files_output_path}/{video_id}.mkv -acodec pcm_s16le -ac 2 {wav_files_output_path}/{video_id}.wav && rm {wav_files_output_path}/{video_id}.mkv")
+        f"ffmpeg $(./yt-dlp/yt-dlp -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {wav_files_output_path}/{video_id}.mkv && ffmpeg -i {wav_files_output_path}/{video_id}.mkv -acodec pcm_s16le -ac 2 {original_wav_file_path} && rm {wav_files_output_path}/{video_id}.mkv")
     
     """
     # for mac
     os.system(
-        f"ffmpeg $(./yt-dlp/yt-dlp_macos -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {wav_files_output_path}/{video_id}.mkv && ffmpeg -i {wav_files_output_path}/{video_id}.mkv -acodec pcm_s16le -ac 2 {wav_files_output_path}/{video_id}.wav && rm {wav_files_output_path}/{video_id}.mkv")
+        f"ffmpeg $(./yt-dlp/yt-dlp_macos -g 'https://www.youtube.com/watch?v={video_id}' | sed \"s/.*/-ss {start_time} -i &/\") -t {duration} -c copy {wav_files_output_path}/{video_id}.mkv && ffmpeg -i {wav_files_output_path}/{video_id}.mkv -acodec pcm_s16le -ac 2 {original_wav_file_path} && rm {wav_files_output_path}/{video_id}.mkv")
     """
-
+    if not os.path.exists(original_wav_file_path):
+        return None
+        
     # resample 16k
-    os.system(f"sox {wav_files_output_path}/{video_id}.wav -r 16000 {wav_files_output_path}/{video_id}_16k.wav && rm {wav_files_output_path}/{video_id}.wav")
+    os.system(f"sox {original_wav_file_path} -r 16000 {wav_file_path} && rm {original_wav_file_path}")
 
-    return f"{wav_files_output_path}/{video_id}_16k.wav"
+    if not os.path.exists(wav_file_path):
+        return None
+    
+    return wav_file_path
 
 
 def save_chunk_to_file(df_chunk, chunk_num, file_name):
@@ -67,7 +78,7 @@ def create_wav_files_from_csv(csv_file_path, wav_files_output_path, sample_data_
         wav_file_path = youtube_video_to_wav_file(
             video_id, start_time, end_time, wav_files_output_path)
 
-        if os.path.exists(wav_file_path):
+        if wav_file_path is not None:
             cur_dict = {"wav": wav_file_path, "labels": labels}
             wav_list.append(cur_dict)
 
