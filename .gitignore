@@ -1,5 +1,6 @@
 *.pth
 *.zip
+*.tgz
 *.pyc
 *.DS_Store
 pretrained_models/ensemble/*
@@ -14,3 +15,8 @@ src/test_wget.py
 .idea
 
 yt-dlp
+
+# audioset data
+egs/audioset/data/datafiles/wav_files
+egs/audioset/data/datafiles/train_data.json
+egs/audioset/data/datafiles/eval_data.json
