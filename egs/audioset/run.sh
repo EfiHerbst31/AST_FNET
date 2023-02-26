@@ -10,7 +10,7 @@ set=balanced
 imagenetpretrain=True
 if [ $set == balanced ]
 then
-  bal=none
+  bal=bal
   lr=5e-5
   epoch=25
   tr_data=./data/datafiles/train_data.json
