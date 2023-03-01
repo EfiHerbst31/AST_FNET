@@ -331,11 +331,11 @@ class ASTFNetModel(nn.Module):
         elif audioset_pretrain == True:
             if audioset_pretrain == True and imagenet_pretrain == False:
                 raise ValueError('currently model pretrained on only audioset is not supported, please set imagenet_pretrain = True to use audioset pretrained model.')
-            if model_size != 'base384':
+            if model_size != 'tiny224':
                 raise ValueError('currently only has base384 AudioSet pretrained model.')
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             sd = torch.load('../../pretrained_models/audioset_fnet_model.pth', map_location=device)
-            audio_model = ASTFNetModel(label_dim=527, fstride=10, tstride=10, input_fdim=128, input_tdim=1024, imagenet_pretrain=False, audioset_pretrain=False, model_size='base384', verbose=False)
+            audio_model = ASTFNetModel(label_dim=527, fstride=10, tstride=10, input_fdim=128, input_tdim=1024, imagenet_pretrain=False, audioset_pretrain=False, model_size='tiny224', verbose=False)
             audio_model = torch.nn.DataParallel(audio_model)
             audio_model.load_state_dict(sd, strict=False)
             self.v = audio_model.module.v
@@ -355,7 +355,7 @@ class ASTFNetModel(nn.Module):
                 print('frequncey stride={:d}, time stride={:d}'.format(fstride, tstride))
                 print('number of patches={:d}'.format(num_patches))
 
-            new_pos_embed = self.v.pos_embed[:, 2:, :].detach().reshape(1, 1212, 768).transpose(1, 2).reshape(1, 768, 12, 101)
+            new_pos_embed = self.v.pos_embed[:, 2:, :].detach().reshape(1, 1212, 192).transpose(1, 2).reshape(1, 192, 12, 101)
             # if the input sequence length is larger than the original audioset (10s), then cut the positional embedding
             if t_dim < 101:
                 new_pos_embed = new_pos_embed[:, :, :, 50 - int(t_dim/2): 50 - int(t_dim/2) + t_dim]
@@ -367,7 +367,7 @@ class ASTFNetModel(nn.Module):
             # otherwise interpolate
             elif f_dim > 12:
                 new_pos_embed = torch.nn.functional.interpolate(new_pos_embed, size=(f_dim, t_dim), mode='bilinear')
-            new_pos_embed = new_pos_embed.reshape(1, 768, num_patches).transpose(1, 2)
+            new_pos_embed = new_pos_embed.reshape(1, 192, num_patches).transpose(1, 2)
             self.v.pos_embed = nn.Parameter(torch.cat([self.v.pos_embed[:, :2, :].detach(), new_pos_embed], dim=1))
 
     def get_shape(self, fstride, tstride, input_fdim=128, input_tdim=1024):
