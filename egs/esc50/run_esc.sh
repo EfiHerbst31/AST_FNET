@@ -5,8 +5,8 @@ export TORCH_HOME=../../pretrained_models
 model=ast
 transformer=$1
 dataset=esc50
-imagenetpretrain=False
-audiosetpretrain=False
+imagenetpretrain=True
+audiosetpretrain=True
 bal=none
 if [ $audiosetpretrain == True ]
 then
@@ -44,7 +44,7 @@ if [ -d $base_exp_dir ]; then
 fi
 mkdir -p $base_exp_dir
 
-for((fold=1;fold<=2;fold++));
+for((fold=1;fold<=5;fold++));
 do
   echo 'now process fold'${fold}
 
